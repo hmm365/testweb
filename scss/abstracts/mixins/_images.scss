@@ -1,0 +1,10 @@
+// Image
+
+// Background image
+// @include background-img(20px, 0 0);
+// background-image: url(../assets/ic/lnb-manage-term-gr.png);
+@mixin background-img($bg-size, $bg-position) {
+  background-size: $bg-size;
+  background-position: $bg-position;
+  background-repeat: no-repeat;
+}

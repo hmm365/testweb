@@ -1,0 +1,41 @@
+.container {
+  padding-top: 0;
+  padding-bottom: 80px;
+  padding-left: 16px;
+  padding-right: 16px;
+}
+.container.pdb-0 {
+  padding-bottom: 16px;
+}
+.container.guide {
+  padding-top: 92px;
+}
+.container.guide .service-info {
+  padding-top: 212px;
+  margin-bottom: 48px;
+  font-size: 18px;
+  background-image: url(../assets/img-round-blue.png);
+  background-size: 180px;
+  /* background-position: center 0; */
+  background-repeat: no-repeat;
+}
+.container.guide .service-info h2 {
+  margin-bottom: 16px;
+}
+.container.guide .faq-banner {
+  background-color: rgb(236, 246, 254);
+  height: 100px;
+  border-radius: 4px;
+  text-align: center;
+  padding-top: 24px;
+}
+.container.guide .faq-banner a {
+  color: rgb(70, 163, 241);
+  display: inline-block;
+  margin-top: 8px;
+  padding-right: 24px;
+  background-image: url(../assets/guide/navigate_next_blue.svg);
+  background-size: 24px;
+  background-position: 100% 0;
+  background-repeat: no-repeat;
+}

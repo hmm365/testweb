@@ -1,0 +1,89 @@
+// Brand Grid
+.container {
+  background-color: var(--gray);
+}
+
+.inner-box {
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+// 콘텐츠 컨테이너
+.contents {
+  text-align: center;
+
+  &.bg-gray {
+    background-color: #f2f2f2;
+  }
+
+  .inner-box {
+    padding: 120px 32px;
+  }
+
+  .title {
+    font-size: var(--block-sub-font-size);
+    margin-bottom: 40px;
+    font-weight: 700;
+
+    span {
+      color: var(--primary);
+    }
+
+    @include respond-to("desktop") {
+      font-size: var(--h2-font-size);
+    }
+  }
+
+  .sub-title {
+    font-size: var(--h3-font-size);
+    margin-bottom: 8px;
+    font-weight: 500;
+
+    @include respond-to("desktop") {
+      font-size: var(--block-sub-font-size);
+    }
+  }
+
+  .caption {
+    color: var(--gray);
+  }
+
+  // 가로 병렬
+  .col-wrap {
+    display: flex;
+
+    + .col-wrap {
+      margin-top: 32px;
+    }
+
+    .col {
+      width: 100%;
+
+      + .col {
+        margin-top: 32px;
+
+        @include respond-to("desktop") {
+          margin-top: 0;
+          margin-left: 32px;
+        }
+      }
+
+      .icon-img {
+        @include size(auto, 80px);
+        margin-left: auto;
+        margin-right: auto;
+        margin-bottom: 16px;
+      }
+    }
+
+    &.box {
+      .col {
+        padding: 40px 24px;
+        border: 1px solid #eaeaea;
+        background-color: var(--white);
+        border-radius: 8px;
+      }
+    }
+  }
+}

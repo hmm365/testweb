@@ -1,0 +1,25 @@
+// Breakpoint
+// mobile :  ~ 320px 디바이스
+// tablet : 321px 이상 ~ 999px 이하 디바이스
+// desktop : 1000px 이상 디바이스
+
+$breakpoints: (
+  'mobile': (
+    min-width: 320px,
+  ),
+  'tablet': (
+    min-width: 999px,
+  ),
+  'desktop': (
+    min-width: 1000px,
+  ),
+);
+
+// Z-index
+:root {
+  --z-index-header: 200;
+  --z-index-header-link: 202;
+  --z-index-header-menu: 210;
+  --z-index-left-mobile-nav: 220;
+  --z-index-modal: 300;
+}

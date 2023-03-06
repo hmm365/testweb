@@ -1,0 +1,94 @@
+// Brand footer
+
+.footer {
+  padding-top: 30px;
+  padding-bottom: 30px;
+  text-align: center;
+  font-size: 15px;
+  border-top: 1px solid #e9ebed;
+  color: #656f7b;
+  @include respond-to("desktop") {
+    padding-top: 55px;
+    padding-bottom: 55px;
+  }
+  .mt-8 {
+    margin-top: 8px;
+  }
+  > * {
+    + * {
+      margin-top: 4px;
+    }
+  }
+
+  .link-group {
+    margin-top: 16px;
+    color: #656f7b;
+
+    + .link-group {
+      margin-top: 16px;
+    }
+
+    > * {
+      color: #656f7b;
+      text-decoration: none;
+    }
+
+    @include respond-to("desktop") {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .group {
+      margin-top: 8px;
+      @include respond-to("desktop") {
+        margin-top: 0;
+      }
+      &:nth-child(1) {
+        a {
+          &:nth-child(1) {
+            border: none;
+          }
+        }
+      }
+      a {
+        &:nth-child(1) {
+          border: none;
+        }
+        margin-left: 4px;
+        padding-left: 4px;
+        border-left: 1px solid #bcc1c8;
+        display: inline-block;
+        height: 12px;
+        line-height: 10px;
+        @include respond-to("desktop") {
+          &:nth-child(1) {
+            border-left: 1px solid #bcc1c8;
+          }
+        }
+      }
+    }
+  }
+
+  .copyright {
+    font-size: 14px;
+    margin-top: 16px;
+  }
+  span {
+    display: block;
+    @include respond-to("desktop") {
+      display: inline;
+    }
+  }
+  .sns-link-group {
+    margin-top: 20px;
+
+    > * {
+      display: inline-block;
+      @include size(32px);
+
+      + * {
+        margin-left: 18px;
+      }
+    }
+  }
+}

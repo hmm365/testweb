@@ -1,0 +1,8 @@
+// Toggle element state
+
+:focus {
+  outline: none;
+  box-shadow: 0 0 0 1px var(--primary);
+  transition: border-color .15s ease-in-out,
+    box-shadow .15s ease-in-out;
+}

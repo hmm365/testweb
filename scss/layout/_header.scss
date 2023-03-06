@@ -1,0 +1,47 @@
+// Brand Header
+.header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  @include size(100%, 80px);
+  background-color: transparent;
+  z-index: var(--z-index-header);
+
+  @include respond-to("desktop") {
+    @include size(100%, 80px);
+  }
+  .inner-box {
+    height: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .logo {
+    margin-left: 32px;
+    display: inline-block;
+    @include size(140px, 80px);
+    @include background-img(contain, 50% 50%);
+    background-image: url(../assets/malgna-bi.svg);
+
+    @include respond-to("desktop") {
+      margin-left: 16px;
+      @include size(200px, 80px);
+    }
+  }
+
+  .app-download {
+    margin-right: 32px;
+    @include size(97px, 40px);
+    background-color: var(--malgne-blue);
+    border: 1px solid var(--malgne-blue);
+    padding: 0;
+    line-height: 40px;
+    font-size: var(--caption-font-size);
+
+    @include respond-to("desktop") {
+      margin-left: 16px;
+      @include size(97px, 40px);
+      line-height: 40px;
+    }
+  }
+}

@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8" />
+  <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+  <title>안심전화</title>
+</head>
+
+<body>
+  <!-- <div>
+    <button onclick="getDiviceList()">장치조회</button>
+  </div>
+  <div style="margin-top: 50px;">
+    <button onclick="setMediaStream()">미디어 스트림 생성</button>
+  </div> -->
+
+  <div>
+    <button onclick="setCreateRoomId()">방생성하기</button>
+  </div>
+  <div style="margin-top: 50px;">
+    <button id="roomAdmission" onclick="setRoomAdmission()">방입장하기</button>
+  </div>
+
+
+  <script src="https://bizapi.gooroomee.com/libs/meet/1.1.21/js/gooroomee-meeting-api.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+  <script>
+    const gmOption = {
+      serviceServerUrl: "https://biz.gooroomee.com",
+      settings: {
+        bandWidth: {
+          video: (function () {
+            // TODO mobile ?
+            return {
+              // send: 512,
+              // receive: 512
+              send: 'auto',
+              receive: 'auto'
+            };
+          }())
+        },
+        deviceSetting: {
+          useClientStream: true, // required requestClientStream event listen
+          video: (function () {
+            // TODO mobile ?
+            return {
+              width: 640,
+              height: 360,
+              frameRate: 15
+            };
+          }())
+        }
+      }
+    }
+    var GM = new GooroomeeMeeting(gmOption);
+
+    $(document).ready(function () {
+      GM.init().then(function () {
+        console.log("initSuccess");
+      }).catch(function (e) {
+        console.log("error : ", e);
+      });
+    });
+
+    
+
+    // 방생성
+    function setCreateRoomId() {
+      const postUrl = 'https://openapi.gooroomee.com/api/v1/room';
+      const postData = {
+        callType: 'P2P',
+        liveMode: false,
+        maxJoinCount: 4,
+        liveMaxJoinCount: 100
+      };
+      const axiosHeader = {
+          "X-GRM-AuthToken": "12056163501988613cf51b7b51cdd8140bb172761d02211a8b",
+          "accept": "application/json",
+          "content-type": "application/x-www-form-urlencoded; charset=utf-8",
+      };
+
+      axios.post(postUrl, postData, axiosHeader).then(response => {
+        textLog1.innerHTML = response.status;
+
+        if (response.status == 200) {
+          const responseData = response.data;
+          const roomId = responseData.data.room.roomId;
+          console.log("roomId : ", roomId);
+          getContractUrl(roomId, 'roomCreater');
+        }
+      });
+    }
+
+    // 방 접속경로
+    function getContractUrl(roomId, username) {
+      const postUrl = 'https://openapi.gooroomee.com/api/v1/room/user/otp/url';
+      const postData = {
+        roleId: 'participant',
+        apiUserId: 'gooroomee-tester',
+        ignorePasswd: false,
+        roomId: roomId,
+        username: username
+      };
+
+      axios.post(postUrl, postData, axiosHeader).then(response => {
+        if (response.status == 200) {
+          const responseData = response.data;
+          console.log("responseData : ", responseData);
+          // const url = `${responseData.data.url}?join=true`;
+          // document.location.replace(url);
+          const roomOtp = responseData.data.roomUserOtp.otp;
+          const options = {
+            otp: roomOtp,
+            camera: "none",
+            mic: "on",
+          }
+          const successCallback = function (room, me) {
+            console.log("successCallback room : ", room);
+            console.log("successCallback me : ", me);
+          }
+          const errorCallback = function (errorCode, data) {
+            console.log("errorCallback errorCode : ", errorCode);
+            console.log("errorCallback data : ", data);
+          }
+
+          GM.join(options, successCallback, errorCallback);
+        }
+      });
+    }
+
+    // 방입장
+    function setRoomAdmission(roomOtp) {
+      const options = {
+        // otp: "biz_d8454fb76431482facc6c7ed93e35a0fcd0784efebcf462287b7",
+        otp: roomOtp,
+        camera: "none",
+        mic: "on",
+      }
+
+      const successCallback = function (room, me) {
+        textLog1.innerHTML = room;
+        textLog2.innerHTML = me;
+
+        console.log("successCallback room : ", room);
+        console.log("successCallback me : ", me);
+      }
+
+      const errorCallback = function (errorCode, data) {
+        textLog1.innerHTML = errorCode;
+        textLog2.innerHTML = data;
+
+        console.log("errorCallback errorCode : ", errorCode);
+        console.log("errorCallback data : ", data);
+      }
+
+      GM.join(options, successCallback, errorCallback);
+    }
+
+
+
+
+
+
+
+
+
+    // 방입장
+    function setRoomAdmission(roomOtp) {
+      const options = {
+        otp: roomOtp,
+        camera: "none",
+        mic: "on",
+      }
+
+      const successCallback = function (room, me) {
+        console.log("successCallback room : ", room);
+        console.log("successCallback me : ", me);
+        setWebToAppAdmission(true);
+      }
+
+      const errorCallback = function (errorCode, data) {
+        console.log("errorCallback errorCode : ", errorCode);
+        console.log("errorCallback data : ", data);
+        setWebToAppAdmission(false);
+      }
+
+      GM.join(options, successCallback, errorCallback);
+    }
+
+    // 방 퇴장
+    function setRoomWithdrawal() {
+      GM.leave();
+    }
+
+    // 참여자 목록 조회
+    function getRoomUserList() {
+      var roomUserList = GM.getRoomUserList();
+      setWebToAppRoomUserList(roomUserList);
+    }
+
+    // 장치 조회
+    function getDiviceList() {
+      GM.UserMedia.getDevices().then(function (devices) {
+        var audioInputList = devices.audioinput;
+        var audioOutputList = devices.audiooutput;
+
+        console.log("devices : ", JSON.stringify(devices));
+        console.log("audioinput : ", JSON.stringify(devices.audioinput));
+        console.log("audioinput last : ", JSON.stringify(devices.audioinput[audioInputList.length - 1]));
+        console.log("audiooutput : ", JSON.stringify(devices.audiooutput));
+        console.log("audiooutput last : ", JSON.stringify(devices.audiooutput[audioOutputList.length - 1]));
+
+        var audioInputItem = devices.audioinput[0];
+        var audioOutputItem = devices.audiooutput[0];
+
+        var audioInputId = audioInputItem.id;
+        var audioOutputId = audioOutputItem.id;
+
+        console.log("audioInputId : ", JSON.stringify(audioInputId));
+        console.log("audioOutputId : ", JSON.stringify(audioOutputId));
+        setMediaStream(audioInputId);
+      });
+    }
+
+    // 미디어 스트림 생성
+    function setMediaStream(deviceId) {
+      GM.UserMedia.getMediaStream('audio', deviceId).then(function (stream) {
+        console.log("stream : ", JSON.stringify(stream));
+        // GM.UserMedia.stopMediaStream(stream);
+      }).catch(function (e) {
+        console.error(e);
+      });
+    }
+  </script>
+
+  <script>
+    // 앱에서 방입장
+    const setAppToWebAdmission = function () {
+      return window.flutter_inappwebview.callHandler('AppToWebAdmission').then(function (result) {
+        console.log("AppToWebAdmission : ", result);
+        const roomOtp = result.roomOtp;
+        setRoomAdmission(roomOtp);
+      });
+    }
+
+    // 앱에서 방퇴장
+    const setAppToWebWithdrawal = function () {
+      return window.flutter_inappwebview.callHandler('AppToWebWithdrawal').then(function (result) {
+        console.log("AppToWebWithdrawal : ", result);
+        setRoomWithdrawal();
+      });
+    }
+
+    // 앱에서 참여자 목록 조회
+    const setAppToWebRoomUserList = function () {
+      return window.flutter_inappwebview.callHandler('AppToWebRoomUserList').then(function (result) {
+        console.log("AppToWebRoomUserList : ", result);
+        getRoomUserList();
+      });
+    }
+
+    // 앱으로 입장여부 전송
+    const setWebToAppAdmission = function (isSuccess) {
+      const postData = {
+        isSuccess: isSuccess,
+      };
+      return window.flutter_inappwebview.callHandler('WebToAppAdmission', postData);
+    }
+
+    // 앱으로 참여자 목록 전송
+    const setWebToAppRoomUserList = function (roomUser) {
+      const postData = {
+        roomUser: roomUser,
+      };
+      return window.flutter_inappwebview.callHandler('WebToAppRoomUserList', postData);
+    }
+  </script>
+</body>
+
+</html>

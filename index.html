@@ -19,7 +19,7 @@
     <button onclick="setCreateRoomId()">방생성하기</button>
   </div>
   <div style="margin-top: 50px;">
-    <button id="roomAdmission" onclick="setRoomAdmission()">방입장하기</button>
+    <button id="roomAdmission" onclick="getContractUrl()">방입장하기</button>
   </div>
 
 
@@ -207,7 +207,7 @@
             console.log('roomOtp', roomOtp)
             console.log('url', response.data.url)
             sessionStorage.setItem('roomOtp', roomOtp);  // 세션스토리지 저장
-            // setRoomAdmission(roomOtp)
+            setRoomAdmission(roomOtp)
           } else {
             console.log('Error : ', response.description)
           }
@@ -219,7 +219,7 @@
 
     // 방입장
     function setRoomAdmission(otp = null) {
-      let roomOtp = otp
+      let roomOtp = 'biz_2ebd1f1bf77049eeaed8bf272ef8d444aa8f4bfd71a14a589ba532ed24c'
       if(roomOtp === null) {
         roomOtp = sessionStorage.getItem('roomOtp');
         sessionStorage.removeItem('roomOtp');

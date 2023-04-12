@@ -219,7 +219,7 @@
 
     // 방입장
     function setRoomAdmission(otp = null) {
-      let roomOtp = 'biz_2ebd1f1bf77049eeaed8bf272ef8d444aa8f4bfd71a14a589ba532ed24c'
+      let roomOtp = otp
       if(roomOtp === null) {
         roomOtp = sessionStorage.getItem('roomOtp');
         sessionStorage.removeItem('roomOtp');

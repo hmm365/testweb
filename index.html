@@ -12,7 +12,7 @@
     <button onclick="getDiviceList()">장치조회</button>
   </div>
   <div style="margin-top: 50px;">
-    <button onclick="setMediaStream()">미디어 스트림 생성</button>
+    <button onclick="stopMediaStream()">미디어 스트림 정지</button>
   </div>
 
   <div>
@@ -195,7 +195,7 @@
           'content-type': 'application/x-www-form-urlencoded',
           'X-GRM-AuthToken': '12056163501988613cf51b7b51cdd8140bb172761d02211a8b'
         },
-        body: new URLSearchParams({roleId: 'participant', apiUserId: 'gooroomee-tester', ignorePasswd: false, roomId: 'roomId', username: username})
+        body: new URLSearchParams({roleId: 'participant', apiUserId: 'gooroomee-tester', ignorePasswd: false, roomId: roomId, username: username})
       };
 
       fetch(postUrl, options)
@@ -314,10 +314,18 @@
       GM.UserMedia.getMediaStream('audio', deviceId).then(function (stream) {
         console.log("stream : ", JSON.stringify(stream));
         // GM.UserMedia.stopMediaStream(stream);
+        sessionStorage.setItem('stream', stream);  // 세션스토리지 저장
       }).catch(function (e) {
         console.error(e);
       });
     }
+
+    //미디 어 스트림 정지
+    function stopMediaStream() {
+        let stream = sessionStorage.getItem(stream)
+        GM.UserMedia.stopMediaStream(stream);
+    }
+
   </script>
 
   <script>

@@ -46,6 +46,11 @@
         }
       }
     }
+    const audioElement = document.createElement('audio');
+    audioElement.autoplay = true;
+    document.body.appendChild(audioElement);    
+    // 미디어 스트림을 오디오 요소에 연결
+
     var GM = new GooroomeeMeeting(gmOption);
     let stream = {}
     let roomId = ''
@@ -72,10 +77,9 @@
         <button onclick="setCreateRoomId()">방생성하기</button>
       </div>
       <div style="margin-top: 50px;">
-        <button id="roomAdmission" onclick="getContractUrl(roomId, username)">방입장하기</button>
+        <button id="roomAdmission" onclick="getContractUrl('4ab8c510fb064e3e8b2a407806e6aada', username)">방입장하기</button>
       </div>
     `
-    console.log(btns)
     // 방생성
     function setCreateRoomId() {
       const postUrl = 'https://openapi.gooroomee.com/api/v1/room';
@@ -113,7 +117,7 @@
           'content-type': 'application/x-www-form-urlencoded',
           'X-GRM-AuthToken': '12056163501988613cf51b7b51cdd8140bb172761d02211a8b'
         },
-        body: new URLSearchParams({roleId: 'participant', apiUserId: 'gooroomee', ignorePasswd: false, roomId: roomId, username: username})
+        body: new URLSearchParams({roleId: 'participant', apiUserId: 'gooroomedde', ignorePasswd: false, roomId: roomId, username: username})
       };
  
       fetch(postUrl, options)
@@ -124,7 +128,6 @@
             const roomOtp = response.data.roomUserOtp.otp;
             console.log('roomOtp', roomOtp)
             console.log('url', response.data.url)
-            sessionStorage.setItem('roomOtp', roomOtp);  // 세션스토리지 저장
             setRoomAdmission(roomOtp)
           } else {
             console.log('Error : ', response.description)
@@ -138,10 +141,6 @@
     // 방입장
     function setRoomAdmission(otp = null) {
       let roomOtp = otp
-      if(roomOtp === null) {
-        roomOtp = sessionStorage.getItem('roomOtp');
-        sessionStorage.removeItem('roomOtp');
-      }
       console.log(otp) 
       const options = {
         otp: otp,
@@ -188,10 +187,11 @@
 
         console.log("audioInputId : ", JSON.stringify(audioInputId));
         console.log("audioOutputId : ", JSON.stringify(audioOutputId));
-
+        let data = ''
         for (const input of devices.audioinput) {
-          selectbtn.innerHTML += `<div style="margin-top: 50px;"> <button onclick='setMediaStream("${input.id}")'>${input.label}</button> </div>`
+          data += `<div style="margin-top: 50px;"> <button onclick='setMediaStream("${input.id}")'>${input.label}</button> </div>`
         }
+        selectbtn.innerHTML = data
 
       });
     }
@@ -201,6 +201,7 @@
       GM.UserMedia.getMediaStream('audio', deviceId).then(function (strea) {
         console.log("stream : ", JSON.stringify(strea));
         stream = strea
+        console.log(strea)
         GM.UserMedia.attachMediaStream(audioElement, stream);
       }).catch(function (e) {
         console.error(e);
@@ -212,12 +213,8 @@
         GM.UserMedia.stopMediaStream(stream);
     }
 
-    const audioElement = document.createElement('audio');
-    audioElement.autoplay = true;
-    document.body.appendChild(audioElement);    
 
-    // 미디어 스트림을 오디오 요소에 연결
-   
+    
   </script>
 
   <script>

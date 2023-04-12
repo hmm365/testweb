@@ -8,12 +8,12 @@
 </head>
 
 <body>
-  <!-- <div>
+  <div>
     <button onclick="getDiviceList()">장치조회</button>
   </div>
   <div style="margin-top: 50px;">
     <button onclick="setMediaStream()">미디어 스트림 생성</button>
-  </div> -->
+  </div>
 
   <div>
     <button onclick="setCreateRoomId()">방생성하기</button>
@@ -66,91 +66,177 @@
 
     
 
+    // // 방생성
+    // function setCreateRoomId() {
+    //   const postUrl = 'https://openapi.gooroomee.com/api/v1/room';
+    //   const postData = {
+    //     callType: 'P2P',
+    //     liveMode: false,
+    //     maxJoinCount: 4,
+    //     liveMaxJoinCount: 100
+    //   };
+    //   const axiosHeader = {
+    //       "X-GRM-AuthToken": "12056163501988613cf51b7b51cdd8140bb172761d02211a8b",
+    //       "accept": "application/json",
+    //       "content-type": "application/x-www-form-urlencoded; charset=utf-8",
+    //   };
+
+    //   axios.post(postUrl, postData, axiosHeader).then(response => {
+    //     textLog1.innerHTML = response.status;
+
+    //     if (response.status == 200) {
+    //       const responseData = response.data;
+    //       const roomId = responseData.data.room.roomId;
+    //       console.log("roomId : ", roomId);
+    //       getContractUrl(roomId, 'roomCreater');
+    //     }
+    //   });
+    // }
+
+    // // 방 접속경로
+    // function getContractUrl(roomId, username) {
+    //   const postUrl = 'https://openapi.gooroomee.com/api/v1/room/user/otp/url';
+    //   const postData = {
+    //     roleId: 'participant',
+    //     apiUserId: 'gooroomee-tester',
+    //     ignorePasswd: false,
+    //     roomId: roomId,
+    //     username: username
+    //   };
+
+    //   axios.post(postUrl, postData, axiosHeader).then(response => {
+    //     if (response.status == 200) {
+    //       const responseData = response.data;
+    //       console.log("responseData : ", responseData);
+    //       // const url = `${responseData.data.url}?join=true`;
+    //       // document.location.replace(url);
+    //       const roomOtp = responseData.data.roomUserOtp.otp;
+    //       const options = {
+    //         otp: roomOtp,
+    //         camera: "none",
+    //         mic: "on",
+    //       }
+    //       const successCallback = function (room, me) {
+    //         console.log("successCallback room : ", room);
+    //         console.log("successCallback me : ", me);
+    //       }
+    //       const errorCallback = function (errorCode, data) {
+    //         console.log("errorCallback errorCode : ", errorCode);
+    //         console.log("errorCallback data : ", data);
+    //       }
+
+    //       GM.join(options, successCallback, errorCallback);
+    //     }
+    //   });
+    // }
+
+    // // 방입장
+    // function setRoomAdmission(roomOtp) {
+    //   const options = {
+    //     // otp: "biz_d8454fb76431482facc6c7ed93e35a0fcd0784efebcf462287b7",
+    //     otp: roomOtp,
+    //     camera: "none",
+    //     mic: "on",
+    //   }
+
+    //   const successCallback = function (room, me) {
+    //     textLog1.innerHTML = room;
+    //     textLog2.innerHTML = me;
+
+    //     console.log("successCallback room : ", room);
+    //     console.log("successCallback me : ", me);
+    //   }
+
+    //   const errorCallback = function (errorCode, data) {
+    //     textLog1.innerHTML = errorCode;
+    //     textLog2.innerHTML = data;
+
+    //     console.log("errorCallback errorCode : ", errorCode);
+    //     console.log("errorCallback data : ", data);
+    //   }
+
+    //   GM.join(options, successCallback, errorCallback);
+    // }
+
     // 방생성
     function setCreateRoomId() {
       const postUrl = 'https://openapi.gooroomee.com/api/v1/room';
-      const postData = {
-        callType: 'P2P',
-        liveMode: false,
-        maxJoinCount: 4,
-        liveMaxJoinCount: 100
-      };
-      const axiosHeader = {
-          "X-GRM-AuthToken": "12056163501988613cf51b7b51cdd8140bb172761d02211a8b",
-          "accept": "application/json",
-          "content-type": "application/x-www-form-urlencoded; charset=utf-8",
+      const options = {
+        method: 'POST',
+        headers: {
+          accept: 'application/json',
+          'content-type': 'application/x-www-form-urlencoded',
+          'X-GRM-AuthToken': '12056163501988613cf51b7b51cdd8140bb172761d02211a8b'
+        },
+        body: new URLSearchParams({callType: 'P2P', liveMode: false, maxJoinCount: 4, liveMaxJoinCount: 100})
       };
 
-      axios.post(postUrl, postData, axiosHeader).then(response => {
-        textLog1.innerHTML = response.status;
-
-        if (response.status == 200) {
-          const responseData = response.data;
-          const roomId = responseData.data.room.roomId;
-          console.log("roomId : ", roomId);
-          getContractUrl(roomId, 'roomCreater');
-        }
-      });
+      fetch(postUrl, options)
+        .then(response => response.json())
+        .then(response => {
+          if(response.resultCode === 'GRM_200'){
+            const roomId = response.data.room.roomId
+            console.log("roomId : ", roomId)
+            getContractUrl(roomId, 'roomCreater')
+          } else {
+            console.log('Error : ', response.description)
+          }
+        })
+        .catch(err => console.error(err));
     }
 
     // 방 접속경로
     function getContractUrl(roomId, username) {
       const postUrl = 'https://openapi.gooroomee.com/api/v1/room/user/otp/url';
-      const postData = {
-        roleId: 'participant',
-        apiUserId: 'gooroomee-tester',
-        ignorePasswd: false,
-        roomId: roomId,
-        username: username
+      const options = {
+        method: 'POST',
+        headers: {
+          accept: 'application/json',
+          'content-type': 'application/x-www-form-urlencoded',
+          'X-GRM-AuthToken': '12056163501988613cf51b7b51cdd8140bb172761d02211a8b'
+        },
+        body: new URLSearchParams({roleId: 'participant', apiUserId: 'gooroomee-tester', ignorePasswd: false, roomId: roomId, username: username})
       };
 
-      axios.post(postUrl, postData, axiosHeader).then(response => {
-        if (response.status == 200) {
-          const responseData = response.data;
-          console.log("responseData : ", responseData);
-          // const url = `${responseData.data.url}?join=true`;
-          // document.location.replace(url);
-          const roomOtp = responseData.data.roomUserOtp.otp;
-          const options = {
-            otp: roomOtp,
-            camera: "none",
-            mic: "on",
+      fetch(postUrl, options)
+        .then(response => response.json())
+        .then(response => {
+          if(response.resultCode === 'GRM_200'){
+            console.log(response)
+            const roomOtp = response.data.roomUserOtp.otp;
+            console.log('roomOtp', roomOtp)
+            console.log('url', response.data.url)
+            sessionStorage.setItem('roomOtp', roomOtp);  // 세션스토리지 저장
+            // setRoomAdmission(roomOtp)
+          } else {
+            console.log('Error : ', response.description)
           }
-          const successCallback = function (room, me) {
-            console.log("successCallback room : ", room);
-            console.log("successCallback me : ", me);
-          }
-          const errorCallback = function (errorCode, data) {
-            console.log("errorCallback errorCode : ", errorCode);
-            console.log("errorCallback data : ", data);
-          }
+        })
+        .catch(err => console.error(err));
 
-          GM.join(options, successCallback, errorCallback);
-        }
-      });
+      
     }
 
     // 방입장
-    function setRoomAdmission(roomOtp) {
+    function setRoomAdmission(otp = null) {
+      let roomOtp = otp
+      if(roomOtp === null) {
+        roomOtp = sessionStorage.getItem('roomOtp');
+        sessionStorage.removeItem('roomOtp');
+      }
+
       const options = {
-        // otp: "biz_d8454fb76431482facc6c7ed93e35a0fcd0784efebcf462287b7",
         otp: roomOtp,
         camera: "none",
         mic: "on",
       }
 
       const successCallback = function (room, me) {
-        textLog1.innerHTML = room;
-        textLog2.innerHTML = me;
-
         console.log("successCallback room : ", room);
         console.log("successCallback me : ", me);
       }
 
       const errorCallback = function (errorCode, data) {
-        textLog1.innerHTML = errorCode;
-        textLog2.innerHTML = data;
-
         console.log("errorCallback errorCode : ", errorCode);
         console.log("errorCallback data : ", data);
       }
@@ -165,29 +251,28 @@
 
 
 
-
     // 방입장
-    function setRoomAdmission(roomOtp) {
-      const options = {
-        otp: roomOtp,
-        camera: "none",
-        mic: "on",
-      }
+    // function setRoomAdmission(roomOtp) {
+    //   const options = {
+    //     otp: roomOtp,
+    //     camera: "none",
+    //     mic: "on",
+    //   }
 
-      const successCallback = function (room, me) {
-        console.log("successCallback room : ", room);
-        console.log("successCallback me : ", me);
-        setWebToAppAdmission(true);
-      }
+    //   const successCallback = function (room, me) {
+    //     console.log("successCallback room : ", room);
+    //     console.log("successCallback me : ", me);
+    //     setWebToAppAdmission(true);
+    //   }
 
-      const errorCallback = function (errorCode, data) {
-        console.log("errorCallback errorCode : ", errorCode);
-        console.log("errorCallback data : ", data);
-        setWebToAppAdmission(false);
-      }
+    //   const errorCallback = function (errorCode, data) {
+    //     console.log("errorCallback errorCode : ", errorCode);
+    //     console.log("errorCallback data : ", data);
+    //     setWebToAppAdmission(false);
+    //   }
 
-      GM.join(options, successCallback, errorCallback);
-    }
+    //   GM.join(options, successCallback, errorCallback);
+    // }
 
     // 방 퇴장
     function setRoomWithdrawal() {
@@ -205,7 +290,7 @@
       GM.UserMedia.getDevices().then(function (devices) {
         var audioInputList = devices.audioinput;
         var audioOutputList = devices.audiooutput;
-
+        console.log(devices)
         console.log("devices : ", JSON.stringify(devices));
         console.log("audioinput : ", JSON.stringify(devices.audioinput));
         console.log("audioinput last : ", JSON.stringify(devices.audioinput[audioInputList.length - 1]));

@@ -19,7 +19,7 @@
     <button onclick="setCreateRoomId()">방생성하기</button>
   </div>
   <div style="margin-top: 50px;">
-    <button id="roomAdmission" onclick="getContractUrl()">방입장하기</button>
+    <button id="roomAdmission" onclick="setRoomAdmission()">방입장하기</button>
   </div>
 
 
@@ -195,7 +195,7 @@
           'content-type': 'application/x-www-form-urlencoded',
           'X-GRM-AuthToken': '12056163501988613cf51b7b51cdd8140bb172761d02211a8b'
         },
-        body: new URLSearchParams({roleId: 'participant', apiUserId: 'gooroomee-tester', ignorePasswd: false, roomId: roomId, username: username})
+        body: new URLSearchParams({roleId: 'participant', apiUserId: 'gooroomee-tester', ignorePasswd: false, roomId: 'roomId', username: username})
       };
 
       fetch(postUrl, options)
@@ -224,9 +224,9 @@
         roomOtp = sessionStorage.getItem('roomOtp');
         sessionStorage.removeItem('roomOtp');
       }
-
+      console.log(otp)
       const options = {
-        otp: roomOtp,
+        otp: 'otp',
         camera: "none",
         mic: "on",
       }

@@ -8,18 +8,10 @@
 </head>
 
 <body>
-  <div>
-    <button onclick="getDiviceList()">장치조회</button>
+  <div id="btns">
   </div>
-  <div style="margin-top: 50px;">
-    <button onclick="stopMediaStream()">미디어 스트림 정지</button>
-  </div>
-
-  <div>
-    <button onclick="setCreateRoomId()">방생성하기</button>
-  </div>
-  <div style="margin-top: 50px;">
-    <button id="roomAdmission" onclick="setRoomAdmission()">방입장하기</button>
+  <div id="select">
+    
   </div>
 
 
@@ -55,7 +47,9 @@
       }
     }
     var GM = new GooroomeeMeeting(gmOption);
-
+    let stream = {}
+    let roomId = ''
+    let username = 'roomCreater'
     $(document).ready(function () {
       GM.init().then(function () {
         console.log("initSuccess");
@@ -64,100 +58,24 @@
       });
     });
 
-    
+    const btns = document.getElementById('btns')
+    const selectbtn = document.getElementById('select')
+    btns.innerHTML = `
+      <div>
+        <button onclick="getDiviceList()">장치조회</button>
+      </div>
+      <div style="margin-top: 50px;">
+        <button onclick="stopMediaStream(stream)">미디어 스트림 정지</button>
+      </div>
 
-    // // 방생성
-    // function setCreateRoomId() {
-    //   const postUrl = 'https://openapi.gooroomee.com/api/v1/room';
-    //   const postData = {
-    //     callType: 'P2P',
-    //     liveMode: false,
-    //     maxJoinCount: 4,
-    //     liveMaxJoinCount: 100
-    //   };
-    //   const axiosHeader = {
-    //       "X-GRM-AuthToken": "12056163501988613cf51b7b51cdd8140bb172761d02211a8b",
-    //       "accept": "application/json",
-    //       "content-type": "application/x-www-form-urlencoded; charset=utf-8",
-    //   };
-
-    //   axios.post(postUrl, postData, axiosHeader).then(response => {
-    //     textLog1.innerHTML = response.status;
-
-    //     if (response.status == 200) {
-    //       const responseData = response.data;
-    //       const roomId = responseData.data.room.roomId;
-    //       console.log("roomId : ", roomId);
-    //       getContractUrl(roomId, 'roomCreater');
-    //     }
-    //   });
-    // }
-
-    // // 방 접속경로
-    // function getContractUrl(roomId, username) {
-    //   const postUrl = 'https://openapi.gooroomee.com/api/v1/room/user/otp/url';
-    //   const postData = {
-    //     roleId: 'participant',
-    //     apiUserId: 'gooroomee-tester',
-    //     ignorePasswd: false,
-    //     roomId: roomId,
-    //     username: username
-    //   };
-
-    //   axios.post(postUrl, postData, axiosHeader).then(response => {
-    //     if (response.status == 200) {
-    //       const responseData = response.data;
-    //       console.log("responseData : ", responseData);
-    //       // const url = `${responseData.data.url}?join=true`;
-    //       // document.location.replace(url);
-    //       const roomOtp = responseData.data.roomUserOtp.otp;
-    //       const options = {
-    //         otp: roomOtp,
-    //         camera: "none",
-    //         mic: "on",
-    //       }
-    //       const successCallback = function (room, me) {
-    //         console.log("successCallback room : ", room);
-    //         console.log("successCallback me : ", me);
-    //       }
-    //       const errorCallback = function (errorCode, data) {
-    //         console.log("errorCallback errorCode : ", errorCode);
-    //         console.log("errorCallback data : ", data);
-    //       }
-
-    //       GM.join(options, successCallback, errorCallback);
-    //     }
-    //   });
-    // }
-
-    // // 방입장
-    // function setRoomAdmission(roomOtp) {
-    //   const options = {
-    //     // otp: "biz_d8454fb76431482facc6c7ed93e35a0fcd0784efebcf462287b7",
-    //     otp: roomOtp,
-    //     camera: "none",
-    //     mic: "on",
-    //   }
-
-    //   const successCallback = function (room, me) {
-    //     textLog1.innerHTML = room;
-    //     textLog2.innerHTML = me;
-
-    //     console.log("successCallback room : ", room);
-    //     console.log("successCallback me : ", me);
-    //   }
-
-    //   const errorCallback = function (errorCode, data) {
-    //     textLog1.innerHTML = errorCode;
-    //     textLog2.innerHTML = data;
-
-    //     console.log("errorCallback errorCode : ", errorCode);
-    //     console.log("errorCallback data : ", data);
-    //   }
-
-    //   GM.join(options, successCallback, errorCallback);
-    // }
-
+      <div>
+        <button onclick="setCreateRoomId()">방생성하기</button>
+      </div>
+      <div style="margin-top: 50px;">
+        <button id="roomAdmission" onclick="getContractUrl(roomId, username)">방입장하기</button>
+      </div>
+    `
+    console.log(btns)
     // 방생성
     function setCreateRoomId() {
       const postUrl = 'https://openapi.gooroomee.com/api/v1/room';
@@ -175,7 +93,7 @@
         .then(response => response.json())
         .then(response => {
           if(response.resultCode === 'GRM_200'){
-            const roomId = response.data.room.roomId
+            roomId = response.data.room.roomId
             console.log("roomId : ", roomId)
             getContractUrl(roomId, 'roomCreater')
           } else {
@@ -195,9 +113,9 @@
           'content-type': 'application/x-www-form-urlencoded',
           'X-GRM-AuthToken': '12056163501988613cf51b7b51cdd8140bb172761d02211a8b'
         },
-        body: new URLSearchParams({roleId: 'participant', apiUserId: 'gooroomee-tester', ignorePasswd: false, roomId: roomId, username: username})
+        body: new URLSearchParams({roleId: 'participant', apiUserId: 'gooroomee', ignorePasswd: false, roomId: roomId, username: username})
       };
-
+ 
       fetch(postUrl, options)
         .then(response => response.json())
         .then(response => {
@@ -244,36 +162,6 @@
       GM.join(options, successCallback, errorCallback);
     }
 
-
-
-
-
-
-
-
-    // 방입장
-    // function setRoomAdmission(roomOtp) {
-    //   const options = {
-    //     otp: roomOtp,
-    //     camera: "none",
-    //     mic: "on",
-    //   }
-
-    //   const successCallback = function (room, me) {
-    //     console.log("successCallback room : ", room);
-    //     console.log("successCallback me : ", me);
-    //     setWebToAppAdmission(true);
-    //   }
-
-    //   const errorCallback = function (errorCode, data) {
-    //     console.log("errorCallback errorCode : ", errorCode);
-    //     console.log("errorCallback data : ", data);
-    //     setWebToAppAdmission(false);
-    //   }
-
-    //   GM.join(options, successCallback, errorCallback);
-    // }
-
     // 방 퇴장
     function setRoomWithdrawal() {
       GM.leave();
@@ -291,11 +179,6 @@
         var audioInputList = devices.audioinput;
         var audioOutputList = devices.audiooutput;
         console.log(devices)
-        console.log("devices : ", JSON.stringify(devices));
-        console.log("audioinput : ", JSON.stringify(devices.audioinput));
-        console.log("audioinput last : ", JSON.stringify(devices.audioinput[audioInputList.length - 1]));
-        console.log("audiooutput : ", JSON.stringify(devices.audiooutput));
-        console.log("audiooutput last : ", JSON.stringify(devices.audiooutput[audioOutputList.length - 1]));
 
         var audioInputItem = devices.audioinput[0];
         var audioOutputItem = devices.audiooutput[0];
@@ -305,27 +188,36 @@
 
         console.log("audioInputId : ", JSON.stringify(audioInputId));
         console.log("audioOutputId : ", JSON.stringify(audioOutputId));
-        setMediaStream(audioInputId);
+
+        for (const input of devices.audioinput) {
+          selectbtn.innerHTML += `<div style="margin-top: 50px;"> <button onclick='setMediaStream("${input.id}")'>${input.label}</button> </div>`
+        }
+
       });
     }
 
     // 미디어 스트림 생성
     function setMediaStream(deviceId) {
-      GM.UserMedia.getMediaStream('audio', deviceId).then(function (stream) {
-        console.log("stream : ", JSON.stringify(stream));
-        // GM.UserMedia.stopMediaStream(stream);
-        sessionStorage.setItem('stream', stream);  // 세션스토리지 저장
+      GM.UserMedia.getMediaStream('audio', deviceId).then(function (strea) {
+        console.log("stream : ", JSON.stringify(strea));
+        stream = strea
+        GM.UserMedia.attachMediaStream(audioElement, stream);
       }).catch(function (e) {
         console.error(e);
       });
     }
 
     //미디 어 스트림 정지
-    function stopMediaStream() {
-        let stream = sessionStorage.getItem(stream)
+    function stopMediaStream(stream) {
         GM.UserMedia.stopMediaStream(stream);
     }
 
+    const audioElement = document.createElement('audio');
+    audioElement.autoplay = true;
+    document.body.appendChild(audioElement);    
+
+    // 미디어 스트림을 오디오 요소에 연결
+   
   </script>
 
   <script>

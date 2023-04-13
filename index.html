@@ -512,7 +512,7 @@
 
         let stream = {};
         let roomId = "";
-        let username = "roomCreater";
+        let username = "";
 
         const btns = document.getElementById("btns");
         const otps = document.getElementById("otps");
@@ -1422,6 +1422,7 @@
       // 방 접속경로
       function getContractUrl() {
         const roomId = document.getElementById("userroomId").value;
+        const userUqName = document.getElementById("userUqName").value;
         const postUrl =
           "https://openapi.gooroomee.com/api/v1/room/user/otp/url";
         const options = {
@@ -1434,10 +1435,10 @@
           },
           body: new URLSearchParams({
             roleId: "participant",
-            apiUserId: "sfsaa",
+            apiUserId: userUqName,
             ignorePasswd: false,
             roomId: roomId,
-            username: "ip",
+            username: userUqName,
           }),
         };
         fetch(postUrl, options)

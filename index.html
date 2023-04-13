@@ -1412,6 +1412,8 @@
               roomId = response.data.room.roomId;
               const roomIdOk = document.getElementById("roomIdOk");
               roomIdOk.innerText = "roomId " + roomId;
+              const roomIdhtml = document.getElementById("userroomId");
+              roomIdhtml.value = roomId;
               console.log("roomId : ", roomId);
             } else {
               console.log("Error : ", response.description);
@@ -1451,8 +1453,8 @@
               console.log("url", response.data.url);
               const otpId = document.getElementById("otpId");
               otpId.innerText = "otp " + roomOtp;
-              const userroomId = document.getElementById("userroomId");
-              userroomId.value = roomOtp;
+              const otppp = document.querySelector(".otp");
+              otppp.value = roomOtp;
               // setRoomAdmission(roomOtp)
             } else {
               console.log("Error : ", response.description);

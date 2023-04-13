@@ -517,6 +517,15 @@
         const btns = document.getElementById("btns");
         const otps = document.getElementById("otps");
 
+        otps.innerHTML = `
+            <span>유저이름<span>
+            <input type="text" id="userUqName" value=""></input>
+            <span>roomId</span>
+            <input type="text" id="userroomId" value="${roomId}"></input>
+            <button id="roomAdmission" onclick="getContractUrl()">OTP 가지고오기</button>
+            <p id="otpId"></p>
+            `;
+
         btns.innerHTML = `
           <div>
             <button onclick="setCreateRoomId()">방생성하기</button>
@@ -1403,14 +1412,6 @@
               roomId = response.data.room.roomId;
               const roomIdOk = document.getElementById("roomIdOk");
               roomIdOk.innerText = "roomId " + roomId;
-
-              otps.innerHTML = `
-            <span>유저이름<span>
-            <input type="text" id="userUqName" value=""></input>
-            <input type="text" id="userroomId" value="${roomId}"></input>
-            <button id="roomAdmission" onclick="getContractUrl()">OTP 가지고오기</button>
-            <p id="otpId"></p>
-            `;
               console.log("roomId : ", roomId);
             } else {
               console.log("Error : ", response.description);

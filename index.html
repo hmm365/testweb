@@ -1407,7 +1407,8 @@
               otps.innerHTML = `
             <span>유저이름<span>
             <input type="text" id="userUqName" value=""></input>
-            <button id="roomAdmission" onclick="getContractUrl('${roomId}')">OTP 가지고오기</button>
+            <input type="text" id="userroomId" value="${roomId}"></input>
+            <button id="roomAdmission" onclick="getContractUrl()">OTP 가지고오기</button>
             <p id="otpId"></p>
             `;
               console.log("roomId : ", roomId);
@@ -1418,7 +1419,8 @@
           .catch((err) => console.error(err));
       }
       // 방 접속경로
-      function getContractUrl(roomId) {
+      function getContractUrl() {
+        const roomId = document.getElementById("userroomId").value;
         const postUrl =
           "https://openapi.gooroomee.com/api/v1/room/user/otp/url";
         const options = {

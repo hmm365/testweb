@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <style>
+      body,
+      input,
+      select,
+      textarea,
+      button {
+        font-size: 11px;
+      }
+
+      .params input[type="text"] {
+        width: 300px;
+      }
+
+      .room div {
+        box-sizing: border-box;
+      }
+
+      .videos {
+        position: relative;
+      }
+
+      .video-layer {
+        position: relative;
+        display: inline-block;
+        vertical-align: middle;
+        width: 160px;
+        height: 90px;
+        border: 1px solid #000;
+        overflow: hidden;
+      }
+      .video-layer video {
+        width: 100%;
+        height: 100%;
+      }
+      .video-layer.me {
+        border: 1px solid blue;
+      }
+      .video-layer.me video[video-type="user"] {
+        transform: scaleX(-1);
+      }
+      .video-layer .desc {
+        position: absolute;
+        z-index: 1;
+        right: 5px;
+        bottom: 2px;
+        background-color: rgba(188, 188, 188, 0.5);
+        cursor: pointer;
+        color: blue;
+        font-size: 12px;
+      }
+      .video-layer .volume {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        z-index: 1;
+        height: 0%;
+        width: 3px;
+        background-color: rgba(255, 0, 0, 0.7);
+        pointer-events: none;
+      }
+
+      .video-main .video-layer {
+        width: 640px;
+        height: 360px;
+      }
+
+      .mixing-video-layer {
+        position: relative;
+      }
+      .mixing-video-layer video[video-type="mixing"] {
+        width: 100%;
+        height: 100%;
+      }
+      .mixing-video-layer .video-layer {
+        position: absolute;
+      }
+      .doc-layer {
+        height: 480px;
+      }
+
+      .doc-layer .doc-view-wrapper {
+        height: 70%;
+      }
+      .doc-layer .doc-view-wrapper > * {
+        vertical-align: top;
+      }
+      .doc-layer .doc-list {
+        display: inline-block;
+        width: 200px;
+        height: 100%;
+        border: 1px solid #000;
+        overflow: auto;
+      }
+      .doc-layer .doc-view {
+        display: inline-block;
+        width: 640px;
+        height: 100%;
+        border: 2px solid #000;
+        background-color: #f0f0f0;
+        overflow: hidden;
+      }
+      .doc-list ol {
+        padding: 0px 25px;
+      }
+      .doc-list ol li {
+        position: relative;
+        cursor: pointer;
+      }
+      .doc-list ol li [data-btn="del"] {
+        position: absolute;
+        right: 0px;
+        top: 0px;
+        padding: 5px;
+        border: 1px solid red;
+        cursor: pointer;
+      }
+      .doc-list ol li .img-thumb > img {
+        border: 1px solid #000;
+      }
+      .doc-list ol [data-type="doc"].selected > span {
+        color: blue;
+        background-color: #0cf;
+      }
+      .doc-list ol [data-type="docPage"].selected > span {
+        color: blue;
+        background-color: #0cf;
+      }
+      .doc-list ol [data-type="docPage"].self-selected > span {
+        color: #f5ff00;
+        background-color: #008b3a;
+      }
+      .doc-list ol li.selected .img-thumb > img {
+        border-color: blue;
+      }
+      .chat-view {
+        display: inline-block;
+        width: 300px;
+        height: 100%;
+        border: 1px solid #000;
+      }
+
+      .chat-view .chat-msg-layer {
+        height: calc(100% - 40px);
+        overflow: auto;
+        padding: 10px;
+      }
+      .chat-view .chat-msg-list {
+        margin: 0;
+        padding: 0;
+      }
+      .chat-view .chat-msg {
+        margin-bottom: 1px;
+        padding: 5px;
+      }
+      .chat-view [data-whisper="true"] {
+        background-color: #c0c0c0;
+      }
+      .chat-view .chat-inp {
+        height: 30px;
+        border-top: 1px solid #000;
+        padding: 7px 0px 4px 4px;
+      }
+      .chat-inp .select-user {
+        width: 65px;
+      }
+      .btn-color {
+        width: 20px;
+        height: 20px;
+      }
+
+      [data-color="#FF0000"] {
+        background-color: #ff0000;
+      }
+      [data-color="#0060FF"] {
+        background-color: #0060ff;
+      }
+      [data-color="#000000"] {
+        background-color: #000000;
+      }
+      [data-color="#ffdb1d"] {
+        background-color: #ffdb1d;
+      }
+      button[data-enable="false"] {
+        color: #9c9c9c;
+      }
+
+      button[data-status="off"] {
+        color: #9c9c9c;
+      }
+      .device-test [class^="device-"]select {
+      }
+
+      .device-test label {
+        display: block;
+      }
+      .device-test label span {
+        display: inline-block;
+        width: 100px;
+      }
+      .device-test video {
+        width: 256px;
+        height: 144px;
+        border: 1px solid #000;
+        box-sizing: border-box;
+      }
+      .device-test .audio-volume {
+        width: 256px;
+        height: 10px;
+        border: 1px solid #000;
+      }
+      .device-test .audio-volume .audio-volume-level {
+        width: 0%;
+        height: 100%;
+        background-color: #0cf;
+      }
+      .preview-screen-capture {
+        width: 400px;
+        height: 300px;
+      }
+
+      .preview-screen-capture .preview {
+        width: 80%;
+        height: 80%;
+      }
+      .preview-screen-capture .preview img {
+        width: 100%;
+        height: 100%;
+        border: 1px solid #000;
+      }
+      .mediashare-layer {
+        height: 480px;
+      }
+
+      .mediashare-layer .mediashare-view-wrapper {
+        height: 80%;
+      }
+
+      .mediashare-layer .mediashare-view-wrapper > * {
+        vertical-align: top;
+      }
+      .mediashare-layer .mediashare-list {
+        display: inline-block;
+        width: 200px;
+        height: 100%;
+        border: 1px solid #000;
+        overflow: auto;
+      }
+      .mediashare-list ol {
+        padding: 0px 25px;
+      }
+      .mediashare-list ol li {
+        position: relative;
+        cursor: pointer;
+      }
+      .mediashare-list ol li [data-btn="del"] {
+        position: absolute;
+        right: 0px;
+        top: 0px;
+        padding: 5px;
+        border: 1px solid red;
+        cursor: pointer;
+      }
+      .mediashare-list li {
+        position: relative;
+      }
+      .mediashare-list li[data-upload="progress"] .progressRec {
+        position: absolute;
+        top: -7px;
+        right: 30px;
+        width: 40px;
+        height: 8px;
+        background-color: rgba(0, 0, 0, 0.4);
+        border-radius: 2px;
+        overflow: hidden;
+      }
+      .mediashare-list li[data-upload="progress"] .progressBar {
+        display: block;
+        height: inherit;
+        background-color: rgba(85, 153, 255, 1);
+      }
+
+      .mediashare-list li[data-upload="complete"] .title {
+        cursor: pointer;
+      }
+      .mediashare-list li .btn-del {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 30px;
+        height: 100%;
+        background-size: auto 36%;
+        cursor: pointer;
+        opacity: 0.3;
+        transition: 0.12s ease-out;
+      }
+      .repeatBtn[data-active="true"] {
+        background-color: rgba(31, 144, 255, 1);
+      }
+      .grm-media-play-layer {
+        display: inline-block;
+        width: 640px;
+        height: 100%;
+        border: 2px solid #000;
+        background-color: #f0f0f0;
+        overflow: hidden;
+        position: relative;
+      }
+      .grm-media-play-layer .play-controls {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 2;
+        height: 50px;
+        color: #ffffff;
+        font-size: 0;
+        opacity: 0.5;
+        transition: 0.2s ease-out;
+        display: flex;
+        align-items: center;
+      }
+
+      .grm-media-play-layer .controls-left {
+        height: inherit;
+        font-size: 0;
+        width: 60px;
+      }
+
+      .grm-media-play-layer .play-btn {
+        display: inline-block;
+        width: 60px;
+        height: inherit;
+        cursor: pointer;
+        font-size: 24px;
+        color: rgba(0, 0, 0, 1);
+      }
+
+      .grm-media-play-layer .play-btn[data-grm-media-play="false"] {
+        background: url("/images/icon/ico_arrowTriangleRight_blue.svg") center
+          no-repeat;
+        background-size: auto 40%;
+      }
+
+      .grm-media-play-layer .play-btn[data-grm-media-play="true"] {
+        background: url("/images/icon/ico_pause.svg") center no-repeat;
+        background-size: auto 40%;
+      }
+
+      .grm-media-play-layer .controls-center {
+        flex: 1;
+      }
+
+      .grm-media-play-layer input[type="range"] {
+        margin: 0;
+        background-color: rgba(0, 0, 0, 0);
+        outline: none;
+        display: inline-block;
+        width: calc(100% - 100px);
+        height: inherit;
+        vertical-align: -webkit-baseline-middle;
+      }
+
+      .grm-media-play-layer .play-time {
+        color: black;
+        margin-left: 12px;
+        display: inline-block;
+        vertical-align: -webkit-baseline-middle;
+        font-size: 12px;
+        letter-spacing: 0;
+      }
+
+      .grm-media-play-layer .play-duration {
+        color: black;
+        margin-right: 5px;
+        display: inline-block;
+        vertical-align: -webkit-baseline-middle;
+        font-size: 12px;
+        letter-spacing: 0;
+      }
+
+      .grm-media-play-layer video {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 80%;
+        pointer-events: none;
+      }
+    </style>
+    <script src="//code.jquery.com/jquery-3.1.1.min.js"></script>
+  </head>
+  <body>
+    <div class="params">
+      otp : <input type="text" class="otp" value="" />
+      <label>
+        <input type="checkbox" id="chkAudioOnly" /><span>음성만</span>
+      </label>
+      <br />
+      <!-- 
+	nick : <input type="text" class="nickname" value="ycs-lib-test" >
+	<br>
+	-->
+      <button id="btn-join">join room</button>
+      <button id="btn-device-test">device test</button>
+    </div>
+
+    <div class="room">
+      <div class="room-info"></div>
+      <div>
+        <label>
+          <input
+            type="radio"
+            name="roomMode"
+            id="rdRoomModeCall"
+            value="call"
+            checked
+          />
+          통화
+        </label>
+        <label>
+          <input
+            type="radio"
+            name="roomMode"
+            id="rdRoomModeDoc"
+            value="docshare"
+          />
+          문서공유
+        </label>
+      </div>
+      <div class="device-controls">
+        <select class="device-list-video"></select>
+        <select class="device-list-audio"></select>
+        <button class="btn-control" data-type="camera">camera on/off</button>
+        <button class="btn-control" data-type="mic">mic on/off</button>
+        <button class="noise-cancel-control" data-type="noise-cancel">
+          noise cancel on/off
+        </button>
+        <button class="noise-cancel-control" data-type="noise-cancel-on">
+          NC on
+        </button>
+        <button class="noise-cancel-control" data-type="noise-cancel-off">
+          NC off
+        </button>
+        <button class="noise-cancel-control" data-type="noise-cancel-status">
+          NC status
+        </button>
+        <button class="btn-screen">screen on/off</button>
+        <button class="btn-screen-capture">screen capture</button>
+      </div>
+      <div class="record-controls">
+        <span>[녹화] </span>
+        <span class="record-state"></span>
+        <span class="record-time"></span>
+        <button data-btn-record="start" style="display: none">녹화시작</button>
+        <button data-btn-record="pause" style="display: none">
+          녹화일시정지
+        </button>
+        <button data-btn-record="resume" style="display: none">
+          녹화이어서하기
+        </button>
+        <button data-btn-record="stop" style="display: none">녹화정지</button>
+        <span class="record-download-progress"></span>
+      </div>
+      <div class="client-record-controls">
+        <span>[단말 녹화] </span>
+        <span class="record-state"></span>
+        <span class="record-time"></span>
+        <button data-btn-record="start" style="">녹화시작</button>
+        <button data-btn-record="pause" style="display: none">
+          녹화일시정지
+        </button>
+        <button data-btn-record="resume" style="display: none">
+          녹화이어서하기
+        </button>
+        <button data-btn-record="stop" style="">녹화정지</button>
+      </div>
+      <div class="video-layouts">
+        <span>[레이아웃 타입]</span>
+        <select class="layoutTypes">
+          <option value="auto">Auto</option>
+          <option value="ml_02_00">2자</option>
+          <option value="ml_05_00">5자</option>
+          <option value="ml_08_00">8자</option>
+          <option value="ml_10_00">10자</option>
+          <option value="ml_32_00">32자</option>
+          <option value="ml_40_00">40자</option>
+        </select>
+      </div>
+      <div class="camera-control">
+        <div class="label">Exposure Mode:</div>
+        <select name="exposureMode" class="cons" data-type="exposureMode">
+          <option value="manual">manual</option>
+          <option value="continuous">continuous</option>
+        </select>
+        <div class="label">Exposure Time:</div>
+        <input
+          name="exposureTime"
+          class="cons"
+          type="range"
+          data-type="exposureTime"
+        />
+        <div class="label">Exposure Compensation:</div>
+        <input
+          name="exposureCompensation"
+          class="cons"
+          type="range"
+          data-type="exposureCompensation"
+        />
+        <div class="label">Brightness:</div>
+        <input
+          name="brightness"
+          class="cons"
+          type="range"
+          data-type="brightness"
+        />
+      </div>
+      <div class="video-main"></div>
+      <div class="videos"></div>
+      <div class="second-video-layer">
+        <video id="second-video" autoplay playsinline></video>
+      </div>
+      <div class="doc-layer">
+        <div>
+          <button id="btnUploadDocFiles">문서 업로드</button>
+          <button id="btnUploadDocFilesFromUrl">문서 URL 업로드</button>
+          <span class="upload-doc-status"></span>
+        </div>
+        <div>
+          <button class="btn-doc-tool" data-type="Pencil">펜</button>
+          <button class="btn-doc-tool" data-type="Highlighter">형광펜</button>
+          <button class="btn-doc-tool" data-type="Eraser">지우개</button>
+          <button class="btn-doc-tool" data-type="EraseAll">모두지우기</button>
+          <button class="btn-doc-tool" data-type="LaserPointer">
+            레이저포인터
+          </button>
+          <button class="btn-doc-tool" data-type="Move">이동</button>
+          <button class="btn-doc-tool" data-type="Line">Line</button>
+          <button class="btn-doc-tool" data-type="Triangle">Triangle</button>
+          <button class="btn-doc-tool" data-type="Rectangle">Rectangle</button>
+          <button class="btn-doc-tool" data-type="Circle">Circle</button>
+        </div>
+        <div>
+          <select class="select-stroke-width">
+            <option value="10">10</option>
+            <option value="30">30</option>
+            <option value="50">50</option>
+          </select>
+          <button class="btn-color" data-color="#0060FF"></button>
+          <button class="btn-color" data-color="#FF0000"></button>
+          <button class="btn-color" data-color="#000000"></button>
+          <button class="btn-color" data-color="#ffdb1d"></button>
+          <button class="btn-zoom" data-type="zoomIn">ZoomIn</button>
+          <button class="btn-zoom" data-type="zoomOut">ZoomOut</button>
+          <button class="btn-zoom" data-type="zoomFit">ZoomFit</button>
+          <button class="btn-zoom" data-type="zoomOri">ZoomOri</button>
+        </div>
+        <div>
+          <label>
+            <input type="checkbox" class="font-bold" />
+            <span>Bold</span>
+          </label>
+          <label>
+            <input type="checkbox" class="font-italic" />
+            <span>Italic</span>
+          </label>
+          <label>
+            <select class="select-font-size">
+              <option value="0.8">8</option>
+              <option value="1">10</option>
+              <option value="2" selected>20</option>
+              <option value="3">30</option>
+              <option value="5">50</option>
+            </select>
+            <span>px</span>
+            <select class="select-font-family">
+              <option value="arial">ARIAL</option>
+              <option value="tahoma">tahoma</option>
+              <option value="굴림">굴림</option>
+              <option value="돋움">돋움</option>
+            </select>
+          </label>
+          <button class="btn-doc-tool" data-type="Text">Text</button>
+        </div>
+        <div>
+          <label>
+            <input type="checkbox" class="doc-self-mode" />
+            <span>self</span>
+          </label>
+          <button class="btn-doc-download" data-type="img">
+            download current page
+          </button>
+          <button class="btn-doc-download" data-type="pdf">
+            download current doc to pdf
+          </button>
+          <span class="doc-to-pdf-status"></span>
+        </div>
+        <div class="doc-view-wrapper">
+          <div class="doc-list">
+            <ol></ol>
+          </div>
+          <div class="doc-view"></div>
+          <div class="chat-view">
+            <div class="chat-msg-layer">
+              <ul class="chat-msg-list"></ul>
+            </div>
+            <div class="chat-inp">
+              <select class="select-user">
+                <option value="">전체</option>
+              </select>
+              <input type="text" class="inp-chat-msg" />
+              <button class="btn-send-chat">전송</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="mediashare-layer">
+        <h1>미디어</h1>
+        <div>
+          <button id="btnUploadMedia">미디어 업로드</button> * 진행자 이상만
+          가능 <button id="btnUploadMediaUrl">미디어 URL 업로드</button> *
+          진행자 이상만 가능
+        </div>
+        <div style="top: 10px">
+          재생:
+          <button class="repeatBtn" data-repeat-type="once" data-active="false">
+            once
+          </button>
+          <button class="repeatBtn" data-repeat-type="all" data-active="false">
+            all
+          </button>
+          <button
+            class="repeatBtn"
+            data-repeat-type="repeat_one"
+            data-active="false"
+          >
+            repeat_one
+          </button>
+        </div>
+        <div class="mediashare-view-wrapper">
+          <div><span class="titleRec"></span></div>
+          <div class="mediashare-list">
+            <ol>
+              <li
+                class="ellipsis media-sample"
+                data-upload="progress"
+                style="display: none"
+              >
+                <span class="title"></span>
+                <span class="fileInfo"></span>
+                <p class="progressRec">
+                  <span class="progressBar" style="width: 0%"></span>
+                </p>
+                <span class="btn-del">X</span>
+              </li>
+            </ol>
+          </div>
+        </div>
+      </div>
+      <dialog class="userControl">
+        <div>
+          <label>권한 : </label>
+          <select class="roleId">
+            <option value="speaker">발표자</option>
+            <option value="emcee">진행자</option>
+            <option value="participant">참여자</option>
+          </select>
+          <button data-role-function="camera">camera</button>
+          <button data-role-function="mic">mic</button>
+          <button data-role-function="draw">draw</button>
+        </div>
+        <div>
+          <label>장치 상태 : </label>
+          <button data-device="camera">camera</button>
+          <button data-device="mic">mic</button>
+        </div>
+        <div>
+          <button data-btn="kick">강제퇴장</button>
+        </div>
+        <div>
+          <button data-btn="close">close</button>
+        </div>
+      </dialog>
+
+      <dialog class="device-test">
+        <div>
+          <label>
+            <span>VideoInput</span>
+            <select device="videoinput"></select>
+          </label>
+          <label>
+            <span>AudioInput</span>
+            <select device="audioinput"></select>
+          </label>
+          <label>
+            <span>AudioOutput</span>
+            <select device="audiooutput"></select>
+          </label>
+        </div>
+        <div class="preview">
+          <video
+            data-type="videoinput"
+            muted="muted"
+            autoplay="autoplay"
+          ></video>
+          <audio data-type="audioinput" autoplay="autoplay"></audio>
+          <div class="audio-volume">
+            <div class="audio-volume-level"></div>
+          </div>
+        </div>
+        <div style="margin-top: 5px">
+          <button class="btn-close">close</button>
+        </div>
+      </dialog>
+
+      <dialog class="install-grm-extension">
+        <div>
+          아래 버튼을 눌러 설치 페이지 이동 후 'CHROME에 추가' 버튼 클릭
+        </div>
+        <div
+          class="btn"
+          style="text-align: center; width: 100px; height: 100px"
+        ></div>
+        <button class="install">설치 페이지 이동</button>
+        <button class="close">닫기</button>
+      </dialog>
+
+      <dialog class="preview-screen-capture">
+        <div class="preview">
+          <img />
+        </div>
+        <button data-btn="upload">공유하기</button>
+        <button data-btn="download">저장하기</button>
+        <button data-btn="close">닫기</button>
+      </dialog>
+    </div>
+
+    <script></script>
+
+    <script src="https://bizapi.gooroomee.com/libs/meet/1.1.21/js/gooroomee-meeting-api.js"></script>
+    <script src="apiLib.js"></script>
+  </body>
+</html>
